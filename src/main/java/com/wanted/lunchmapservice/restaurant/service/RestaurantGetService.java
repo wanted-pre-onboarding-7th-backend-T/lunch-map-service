@@ -17,9 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class RestaurantGetService {
     private final RestaurantRepository repository;
     private final RestaurantMapper mapper;
+
     public ResponseDto<GetRestaurantDetailResponseDto> getDetails(Long restaurantId) {
-        return mapper.toResponseDto(validRestaurant(restaurantId));
+        Restaurant result = validRestaurant(restaurantId);
+        result.sortRatingList();
+        return mapper.toResponseDto(result);
     }
+
 
     private Restaurant validRestaurant(Long restaurantId) {
         return repository.findById(restaurantId)
