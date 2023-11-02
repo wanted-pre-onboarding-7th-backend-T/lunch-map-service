@@ -1,5 +1,6 @@
 package com.wanted.lunchmapservice.location.entity;
 
+import com.wanted.lunchmapservice.common.BaseTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,13 +12,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-public class Location {
+public class Location extends BaseTime {
     @Id
     @Column(name = "location_id", updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

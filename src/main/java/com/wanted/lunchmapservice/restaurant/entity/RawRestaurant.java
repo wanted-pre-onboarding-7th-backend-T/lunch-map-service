@@ -1,5 +1,6 @@
 package com.wanted.lunchmapservice.restaurant.entity;
 
+import com.wanted.lunchmapservice.common.BaseTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -16,7 +17,7 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class RawRestaurant {
+public class RawRestaurant extends BaseTime {
 
     @EmbeddedId
     private RawRestaurantId rawRestaurantId;
