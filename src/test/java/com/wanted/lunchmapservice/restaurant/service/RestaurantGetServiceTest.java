@@ -49,6 +49,8 @@ class RestaurantGetServiceTest {
         assertThat(result.getData().roadNameAddress()).isEqualTo(mock.getRoadNameAddress());
         assertThat(result.getData().lotNumberAddress()).isEqualTo(mock.getLotNumberAddress());
         assertThat(result.getData().zipCode()).isEqualTo(mock.getZipCode());
+        assertThat(result.getData().longitude()).isEqualTo(mock.getLongitude());
+        assertThat(result.getData().latitude()).isEqualTo(mock.getLatitude());
         assertThat(result.getData().location().latitude()).isEqualTo(mock.getLatitude());
         assertThat(result.getData().location().longitude()).isEqualTo(mock.getLongitude());
         assertThat(result.getData().location().cityName()).isEqualTo(mock.getCityName());

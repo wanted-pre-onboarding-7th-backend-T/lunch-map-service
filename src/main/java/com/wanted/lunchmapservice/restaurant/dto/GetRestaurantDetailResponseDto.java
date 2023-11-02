@@ -6,7 +6,8 @@ import lombok.Builder;
 @Builder
 public record GetRestaurantDetailResponseDto(Long restaurantId, String restaurantName,
                                              String lotNumberAddress, String roadNameAddress,
-                                             String zipCode, LocationDto location,
+                                             String zipCode, Double longitude,
+                                             Double latitude, LocationDto location,
                                              Double averageScore) {
 
 }

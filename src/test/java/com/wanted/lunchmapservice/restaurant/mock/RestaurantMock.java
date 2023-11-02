@@ -48,6 +48,8 @@ public class RestaurantMock {
                 .restaurantId(getEntity(id).getId())
                 .averageScore(getEntity(id).getAverageScore())
                 .restaurantName(getEntity(id).getName())
+                .longitude(getEntity(id).getLongitude())
+                .latitude(getEntity(id).getLatitude())
                 .lotNumberAddress(getEntity(id).getLotNumberAddress())
                 .roadNameAddress(getEntity(id).getRoadNameAddress())
                 .location(createLocationDto(getEntity(id).getLocation()))
