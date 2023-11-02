@@ -1,33 +1,25 @@
 package com.wanted.lunchmapservice.restaurant.entity;
 
-
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+
+@DynamicInsert
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@DynamicInsert
 @Entity
 public class RawRestaurant {
 
-    @Id
-    @Column(name = "name", updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String name;
-
-    @Id
-    @Column(name = "lot_number_address", nullable = false)
-    private String lotNumberAddress;
+    @EmbeddedId
+    private RawRestaurantId rawRestaurantId;
 
     @ColumnDefault("'EMPTY'")
     @Column(name = "country_name", nullable = false)
