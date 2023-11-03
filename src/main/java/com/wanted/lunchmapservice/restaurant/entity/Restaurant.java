@@ -12,8 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,6 @@ import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -36,10 +35,6 @@ public class Restaurant extends BaseTime {
     @Column(name = "restaurant_id", updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "location_id")
-    private Location location;
 
     @ColumnDefault("'EMPTY'")
     @Column(name = "name", nullable = false)
@@ -69,9 +64,12 @@ public class Restaurant extends BaseTime {
     @Column(name = "average_score", nullable = false)
     private Double averageScore;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
+
     @Default
-    @Setter
-    @OneToMany(fetch = LAZY,cascade = CascadeType.PERSIST,mappedBy = "restaurant")
+    @OneToMany(fetch = LAZY, cascade = CascadeType.PERSIST, mappedBy = "restaurant")
     private List<Rating> ratingList = new ArrayList<>();
 
     public void sortRatingList() {
