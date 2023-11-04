@@ -18,6 +18,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @Entity
 public class Location extends BaseTime {
+
     @Id
     @Column(name = "location_id", updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,4 +40,7 @@ public class Location extends BaseTime {
     @Column(name = "latitude", nullable = false)
     private Double latitude;
 
+    public String getCode() {
+        return cityName.substring(0, 2) + " " + countryName;
+    }
 }
