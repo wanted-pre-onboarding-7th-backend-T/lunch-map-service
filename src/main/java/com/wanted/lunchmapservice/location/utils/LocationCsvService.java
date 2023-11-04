@@ -6,7 +6,9 @@ import com.wanted.lunchmapservice.location.repository.LocationRepository;
 import jakarta.annotation.PostConstruct;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LocationCsvService {
 
     private final LocationRepository locationRepository;
+    private final static Map<String, Location> locationCacheMap = new HashMap<>();
     private final static String FILE_NAME = "static/sgg_lat_lon.csv";
 
     public LocationCsvService(LocationRepository locationRepository) {
@@ -22,11 +25,14 @@ public class LocationCsvService {
     }
 
     @PostConstruct
-    @Transactional
+    @Transactional //TODO: 데이터 무결성 고려 (현재 메소드에 트랜잭션 걸리지 않고 saveAll 메소드에 걸림)
     public void storeLocationCsvData() {
         List<Location> locationDataList = readLocationCsvData().stream()
             .map(LocationCsvDto::toEntity).toList();
-        locationRepository.saveAll(locationDataList); //TODO: 데이터 무결성 고려
+        locationRepository.saveAll(locationDataList);
+        for (Location location : locationDataList) {
+            locationCacheMap.put(location.getCode(), location);
+        }
     }
 
     private List<LocationCsvDto> readLocationCsvData() {
@@ -39,5 +45,9 @@ public class LocationCsvService {
         } catch (Exception e) {
             return List.of();
         }
+    }
+
+    public Location getLocation(String locationCode) {
+        return locationCacheMap.get(locationCode);
     }
 }
