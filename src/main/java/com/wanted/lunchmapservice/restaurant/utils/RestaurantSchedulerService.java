@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
-public class SchedulerService {
+public class RestaurantSchedulerService {
 
     private final OpenApiCaller apiCaller;
     private final LocationCsvService locationCsvService;
