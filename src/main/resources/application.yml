@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL}&rewriteBatchedStatements=true
     password: ${DATABASE_PASSWORD}
     username: ${DATABASE_ID}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,6 +13,10 @@ spring:
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+        order_inserts: true
+        order_updates: true
+        jdbc:
+          batch_size: 100
     database: mysql
   data:
     redis:
