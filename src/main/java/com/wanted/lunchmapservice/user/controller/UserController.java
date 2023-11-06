@@ -33,13 +33,9 @@ public class UserController {
     }
     @PatchMapping("/info")
     public ResponseEntity<?> updateUserInfo(@Valid @RequestBody UserUpdateRequestDto settingsDto) {
-        // You may want to include authentication and authorization checks
-        // to ensure that the user is permitted to update the information.
 
-        // The service layer would handle the update logic
-        userService.updateUserSettings(settingsDto);
+        service.updateUserSettings(settingsDto);
 
-        // Return an appropriate response, such as:
         return ResponseEntity.ok().build();
     }
 }
