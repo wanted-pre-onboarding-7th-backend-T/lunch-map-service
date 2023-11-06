@@ -60,4 +60,8 @@ public class User extends BaseTime {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }
