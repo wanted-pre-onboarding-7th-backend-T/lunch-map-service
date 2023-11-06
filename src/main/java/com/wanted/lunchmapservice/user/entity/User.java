@@ -55,4 +55,9 @@ public class User extends BaseTime {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
+
+    //테스트용 아이디세터
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

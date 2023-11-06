@@ -9,8 +9,6 @@ public class UserUpdateRequestDto {
     private Double latitude;
     private Double longitude;
     private ServiceAccess serviceAccess;
-
-    @Getter
     private Long userId;
 
     public void setServiceAccess(ServiceAccess serviceAccess) {
@@ -18,10 +16,14 @@ public class UserUpdateRequestDto {
     }
 
     public void setLatitude(Double latitude) {
+
         this.latitude = latitude;
     }
-
     public void setLongitude(Double longitude) {
+
         this.longitude = longitude;
+    }
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
