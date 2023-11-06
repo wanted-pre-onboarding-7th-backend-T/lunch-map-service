@@ -58,6 +58,51 @@ class UserServiceTest {
     }
 
 
+    @DisplayName("사용자 근처의 식당은 평점순(높은순)으로 조회")
+    @Test
+    void orderByRatingTest() {
+        //given
+        Double range = 3.0;
+        UserRestaurantRequestDto requestDto = UserRestaurantRequestDto.builder()
+                .currentLatitude(String.valueOf(lat))
+                .currentLongitude(String.valueOf(lon))
+                .range(range)
+                .sorting("rating")
+                .build();
+
+        //when
+        List<RestaurantResponseDto> responseRestaurants = userService.findNearbyRestaurant(requestDto)
+                .getResponseRestaurants();
+
+        //then
+        Assertions.assertThat(responseRestaurants.get(0).getAverageScore())
+                .isGreaterThanOrEqualTo(responseRestaurants.get(1).getAverageScore());
+    }
+
+    @DisplayName("사용자 근처의 식당은 거리순(가까운순)으로 조회")
+    @Test
+    void orderByDistanceTest() {
+        //given
+        Double range = 3.0;
+        UserRestaurantRequestDto requestDto = UserRestaurantRequestDto.builder()
+                .currentLatitude(String.valueOf(lat))
+                .currentLongitude(String.valueOf(lon))
+                .range(range)
+                .sorting("distance")
+                .build();
+
+        //when
+        List<RestaurantResponseDto> responseRestaurants = userService.findNearbyRestaurant(requestDto)
+                .getResponseRestaurants();
+
+        //then
+        double nearestDistance = calculateDistance(lat, lon, responseRestaurants.get(1).getLatitude(),
+                responseRestaurants.get(0).getLongitude());
+        double secondNearestDistance = calculateDistance(lat, lon, responseRestaurants.get(2).getLatitude(),
+                responseRestaurants.get(0).getLongitude());
+        Assertions.assertThat(nearestDistance).isLessThanOrEqualTo(secondNearestDistance);
+    }
+
     //두 위도와 경도 사이의 거리를 구하는 메소드
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double deltaLat = Math.toRadians(lat2 - lat1);
