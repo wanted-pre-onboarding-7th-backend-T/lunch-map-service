@@ -7,6 +7,7 @@ import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
+import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
 import com.wanted.lunchmapservice.user.entity.User;
 import com.wanted.lunchmapservice.user.mapper.UserMapper;
 import com.wanted.lunchmapservice.user.repository.UserRepository;
@@ -59,5 +60,12 @@ public class UserService {
         }
 
         repository.save(user);
+    }
+
+    public UserInfoResponseDto getUserInfo(Long userId) {
+        User user = repository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return new UserInfoResponseDto(user);
     }
 }
