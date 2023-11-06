@@ -83,4 +83,8 @@ public class Restaurant extends BaseTime {
         this.longitude = rawData.getLongitude();
         this.latitude = rawData.getLatitude();
     }
+
+    public void setAverageScore(Double averageScore) {
+        this.averageScore = averageScore;
+    }
 }
