@@ -38,6 +38,6 @@ open-api:
     - https://openapi.gg.go.kr/Genrestrtlunch
     - https://openapi.gg.go.kr/Genrestrtcate
     - https://openapi.gg.go.kr/Genrestrtmovmntcook
-  key: 4649116924354fc182e7e611d7ba33d8
+  key: ${OPEN_API_KEY}
   type: xml
   size: 1000
