@@ -4,12 +4,11 @@ package com.wanted.lunchmapservice.user.service;
 import com.wanted.lunchmapservice.common.dto.ResponseDto;
 import com.wanted.lunchmapservice.common.exception.CommonException;
 import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
-import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
-import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponseDto;
 import com.wanted.lunchmapservice.restaurant.service.RestaurantService;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
+import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
 import com.wanted.lunchmapservice.user.entity.User;
 import com.wanted.lunchmapservice.user.mapper.UserMapper;
@@ -51,19 +50,20 @@ public class UserService {
     @Transactional
     public void updateUserSettings(UserUpdateRequestDto settingsDto) {
         User user = repository.findById(settingsDto.getUserId())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if(settingsDto.getServiceAccess() != null) {
+        if (settingsDto.getServiceAccess() != null) {
             user.setServiceAccess(settingsDto.getServiceAccess());
         }
-        if(settingsDto.getLatitude() != null) {
+        if (settingsDto.getLatitude() != null) {
             user.setLatitude(settingsDto.getLatitude());
         }
-        if(settingsDto.getLongitude() != null) {
+        if (settingsDto.getLongitude() != null) {
             user.setLongitude(settingsDto.getLongitude());
         }
 
         repository.save(user);
+    }
 
     public RestaurantListResponseDto findNearbyRestaurant(UserRestaurantRequestDto dto) {
         return restaurantService.findNearbyRestaurant(dto);

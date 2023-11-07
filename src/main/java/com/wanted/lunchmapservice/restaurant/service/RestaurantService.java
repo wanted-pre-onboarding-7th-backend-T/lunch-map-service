@@ -1,10 +1,10 @@
 package com.wanted.lunchmapservice.restaurant.service;
 
 import com.wanted.lunchmapservice.common.PagingUtil;
-import com.wanted.lunchmapservice.restaurant.RestaurantMapper;
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponseDto;
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantResponseDto;
 import com.wanted.lunchmapservice.restaurant.entity.Restaurant;
+import com.wanted.lunchmapservice.restaurant.mapper.RestaurantMapper;
 import com.wanted.lunchmapservice.restaurant.repository.QuerydslRestaurantRepositoryCustom;
 import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
 import java.util.List;
