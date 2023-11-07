@@ -44,8 +44,9 @@ public class UserController {
 
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserInfoResponseDto> getUserInfo(@PathVariable Long userId) {
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> getUserInfo(@PathVariable Long userId) {
         UserInfoResponseDto userInfo = service.getUserInfo(userId);
-        return ResponseEntity.ok(userInfo);
+        ResponseDto<UserInfoResponseDto> responseDto = new ResponseDto<>(200, "Success", userInfo);
+        return ResponseEntity.ok(responseDto);
     }
 }
