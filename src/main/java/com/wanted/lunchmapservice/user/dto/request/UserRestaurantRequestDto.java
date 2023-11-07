@@ -1,5 +1,6 @@
 package com.wanted.lunchmapservice.user.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.wanted.lunchmapservice.common.dto.RequestPageDto;
 import com.wanted.lunchmapservice.user.enums.Sorting;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +21,8 @@ public class UserRestaurantRequestDto extends RequestPageDto {
     private String currentLatitude;
     @NotNull(message = "현재 위치에서 조화하고 싶은 맛집의 반경을 입력해 주세요.")
     private Double range;
+    @JsonValue
     @Builder.Default
-    private String sorting = Sorting.ORDER_BY_DISTANCE.getSortingOption();
+    private Sorting sorting = Sorting.ORDER_BY_DISTANCE;
 
 }

@@ -1,11 +1,8 @@
 package com.wanted.lunchmapservice.user.enums;
 
-import com.wanted.lunchmapservice.common.exception.CommonException;
-import java.util.Arrays;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@Getter
 public enum Sorting {
 
     ORDER_BY_DISTANCE("distance"),
@@ -17,11 +14,19 @@ public enum Sorting {
         this.sortingOption = sortingOption;
     }
 
-    public static Sorting parse(String sorting) {
-        return Arrays.stream(Sorting.values()).
-                filter(value -> value.sortingOption.equalsIgnoreCase(sorting))
-                .findFirst()
-                .orElseThrow(() -> new CommonException(HttpStatus.BAD_REQUEST, "유효하지 않은 정렬기준입니다."));
+    @JsonCreator
+    public static Sorting from(String value) {
+        for (Sorting sorting : Sorting.values()) {
+            if (sorting.getValue().equals(value)) {
+                return sorting;
+            }
+        }
+        return null;
+    }
+
+    @JsonValue
+    public String getValue() {
+        return sortingOption;
     }
 
 }
