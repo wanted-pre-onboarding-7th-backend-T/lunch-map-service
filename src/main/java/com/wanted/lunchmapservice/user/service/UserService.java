@@ -49,17 +49,21 @@ public class UserService {
         User user = repository.findById(settingsDto.getUserId())
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if(settingsDto.getServiceAccess() != null) {
-            user.setServiceAccess(settingsDto.getServiceAccess());
-        }
-        if(settingsDto.getLatitude() != null) {
-            user.setLatitude(settingsDto.getLatitude());
-        }
-        if(settingsDto.getLongitude() != null) {
-            user.setLongitude(settingsDto.getLongitude());
-        }
+        updateUserData(user, settingsDto);
 
         repository.save(user);
+    }
+
+    private void updateUserData(User user, UserUpdateRequestDto settingsDto) {
+        if (settingsDto.getServiceAccess() != null) {
+            user.setServiceAccess(settingsDto.getServiceAccess());
+        }
+        if (settingsDto.getLatitude() != null) {
+            user.setLatitude(settingsDto.getLatitude());
+        }
+        if (settingsDto.getLongitude() != null) {
+            user.setLongitude(settingsDto.getLongitude());
+        }
     }
 
     public UserInfoResponseDto getUserInfo(Long userId) {
