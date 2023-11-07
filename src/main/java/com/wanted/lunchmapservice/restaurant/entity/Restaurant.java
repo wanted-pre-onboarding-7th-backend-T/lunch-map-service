@@ -1,18 +1,25 @@
 package com.wanted.lunchmapservice.restaurant.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.wanted.lunchmapservice.common.BaseTime;
 import com.wanted.lunchmapservice.location.entity.Location;
+import com.wanted.lunchmapservice.rating.Rating;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -63,6 +70,10 @@ public class Restaurant extends BaseTime {
     @ColumnDefault("-1")
     @Column(name = "average_score", nullable = false)
     private Double averageScore;
+  
+    @Default
+    @OneToMany(fetch = LAZY, cascade = CascadeType.PERSIST, mappedBy = "restaurant")
+    private List<Rating> ratingList = new ArrayList<>();
 
     public static Restaurant of(Location location, RawRestaurant rawData) {
         return Restaurant.builder()
@@ -88,5 +99,8 @@ public class Restaurant extends BaseTime {
         this.zipCode = rawData.getZipCode();
         this.longitude = rawData.getLongitude();
         this.latitude = rawData.getLatitude();
+
+    public void sortRatingList() {
+        ratingList.sort((d1, d2) -> d2.getId().compareTo(d1.getId()));
     }
 }
