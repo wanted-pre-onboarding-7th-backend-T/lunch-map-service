@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,6 +21,7 @@ public class RestaurantService {
     private final QuerydslRestaurantRepositoryCustom qRestaurantRepository;
     private final RestaurantMapper restaurantMapper;
 
+    @Transactional(readOnly = true)
     public RestaurantListResponseDto findNearbyRestaurant(UserRestaurantRequestDto dto) {
         PageRequest pageRequest = PageRequest.of(dto.getPage(), dto.getPageSize());
         Page<Restaurant> nearbyRestaurant = qRestaurantRepository.findNearByRestaurant(dto, pageRequest);
