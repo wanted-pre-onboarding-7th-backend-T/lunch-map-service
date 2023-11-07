@@ -1,17 +1,25 @@
 package com.wanted.lunchmapservice.restaurant.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.wanted.lunchmapservice.common.BaseTime;
 import com.wanted.lunchmapservice.location.entity.Location;
+import com.wanted.lunchmapservice.rating.Rating;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -24,12 +32,14 @@ import org.hibernate.annotations.DynamicInsert;
 @DynamicInsert
 @Entity
 public class Restaurant extends BaseTime {
+
     @Id
     @Column(name = "restaurant_id", updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurant_seq")
+    @SequenceGenerator(name = "restaurant_seq", sequenceName = "restaurant_seq", allocationSize = 100)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
 
@@ -60,4 +70,41 @@ public class Restaurant extends BaseTime {
     @ColumnDefault("-1")
     @Column(name = "average_score", nullable = false)
     private Double averageScore;
+  
+    @Default
+    @OneToMany(fetch = LAZY, cascade = CascadeType.PERSIST, mappedBy = "restaurant")
+    private List<Rating> ratingList = new ArrayList<>();
+
+    public static Restaurant of(Location location, RawRestaurant rawData) {
+        return Restaurant.builder()
+            .location(location)
+            .name(rawData.getName())
+            .lotNumberAddress(rawData.getLotNumberAddress())
+            .roadNameAddress(rawData.getRoadNameAddress())
+            .zipCode(rawData.getZipCode())
+            .longitude(rawData.getLongitude())
+            .latitude(rawData.getLatitude())
+            .averageScore(0.).build();
+    }
+
+    public String getKey() {
+        return name + " " + lotNumberAddress;
+    }
+
+    public void update(Location location, RawRestaurant rawData) {
+        this.location = location;
+        this.name = rawData.getName();
+        this.lotNumberAddress = rawData.getLotNumberAddress();
+        this.roadNameAddress = rawData.getRoadNameAddress();
+        this.zipCode = rawData.getZipCode();
+        this.longitude = rawData.getLongitude();
+        this.latitude = rawData.getLatitude();
+
+    public void sortRatingList() {
+        ratingList.sort((d1, d2) -> d2.getId().compareTo(d1.getId()));
+    }
+
+    public void setAverageScore(Double averageScore) {
+        this.averageScore = averageScore;
+    }
 }

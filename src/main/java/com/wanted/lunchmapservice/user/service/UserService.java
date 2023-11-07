@@ -6,6 +6,10 @@ import com.wanted.lunchmapservice.common.exception.CommonException;
 import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
+import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponseDto;
+import com.wanted.lunchmapservice.restaurant.service.RestaurantService;
+import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
+import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
 import com.wanted.lunchmapservice.user.entity.User;
 import com.wanted.lunchmapservice.user.mapper.UserMapper;
@@ -24,6 +28,7 @@ public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
+    private final RestaurantService restaurantService;
 
     public ResponseDto<UserIdResponseDto> saveUser(UserPostRequestDto postDto) {
         validUsernameExist(postDto);
@@ -59,5 +64,9 @@ public class UserService {
         }
 
         repository.save(user);
+
+    public RestaurantListResponseDto findNearbyRestaurant(UserRestaurantRequestDto dto) {
+        return restaurantService.findNearbyRestaurant(dto);
+
     }
 }
