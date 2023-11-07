@@ -119,4 +119,8 @@ public class RawRestaurant extends BaseTime {
     public String getLocationCode() {
         return getLotNumberAddress().substring(0, 2) + " " + countryName;
     }
+
+    public String getKey() {
+        return getName() + " " + getLotNumberAddress();
+    }
 }

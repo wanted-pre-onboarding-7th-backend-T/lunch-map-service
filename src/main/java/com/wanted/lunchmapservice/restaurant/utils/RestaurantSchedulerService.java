@@ -8,6 +8,7 @@ import com.wanted.lunchmapservice.restaurant.entity.RawRestaurant;
 import com.wanted.lunchmapservice.restaurant.repository.RestaurantRepository;
 import com.wanted.lunchmapservice.restaurant.utils.openapi.OpenApiCaller;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -33,14 +34,16 @@ public class RestaurantSchedulerService {
     }
 
     private void syncRestaurantData(List<RawRestaurant> rawRestaurantList) {
-        List<Restaurant> restaurantList = restaurantRepository.findAll();
+        Map<String, Restaurant> restaurantMap = restaurantRepository.findAllMap();
         for (RawRestaurant rawRestaurant : rawRestaurantList) {
-            restaurantList.stream()
-                .filter(restaurant -> restaurant.isSame(rawRestaurant))
-                .findFirst()
-                .ifPresentOrElse(restaurant -> updateData(rawRestaurant, restaurant),
-                    () -> insertData(rawRestaurant));
+            if (restaurantMap.containsKey(rawRestaurant.getKey())) {
+                updateData(rawRestaurant, restaurantMap.get(rawRestaurant.getKey()));
+            } else {
+                insertData(rawRestaurant, restaurantMap);
+            }
         }
+        List<Restaurant> updatedRestaurantList = restaurantMap.values().stream().toList();
+        restaurantRepository.saveAll(updatedRestaurantList);
     }
 
     private void updateData(RawRestaurant rawRestaurant, Restaurant restaurant) {
@@ -48,9 +51,9 @@ public class RestaurantSchedulerService {
         restaurant.update(location, rawRestaurant);
     }
 
-    private void insertData(RawRestaurant rawRestaurant) {
+    private void insertData(RawRestaurant rawRestaurant, Map<String, Restaurant> restaurantMap) {
         Location location = locationCsvService.getLocation(rawRestaurant.getLocationCode());
         Restaurant restaurant = Restaurant.of(location, rawRestaurant);
-        restaurantRepository.save(restaurant);
+        restaurantMap.put(restaurant.getKey(), restaurant);
     }
 }

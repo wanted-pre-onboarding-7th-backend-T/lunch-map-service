@@ -76,9 +76,8 @@ public class Restaurant extends BaseTime {
             .averageScore(0.).build();
     }
 
-    public boolean isSame(RawRestaurant rawRestaurant) {
-        return name.equals(rawRestaurant.getName())
-            && lotNumberAddress.equals(rawRestaurant.getLotNumberAddress());
+    public String getKey() {
+        return name + " " + lotNumberAddress;
     }
 
     public void update(Location location, RawRestaurant rawData) {
