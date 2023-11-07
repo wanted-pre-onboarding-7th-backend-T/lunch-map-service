@@ -6,6 +6,10 @@ import com.wanted.lunchmapservice.common.exception.CommonException;
 import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
+import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponseDto;
+import com.wanted.lunchmapservice.restaurant.service.RestaurantService;
+import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
+import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
 import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
 import com.wanted.lunchmapservice.user.entity.User;
@@ -25,6 +29,7 @@ public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
+    private final RestaurantService restaurantService;
 
     public ResponseDto<UserIdResponseDto> saveUser(UserPostRequestDto postDto) {
         validUsernameExist(postDto);
@@ -43,6 +48,7 @@ public class UserService {
                     HttpStatus.CONFLICT, "사용할 수 없는 username 입니다.");
         });
     }
+
 
     @Transactional
     public void updateUserSettings(UserUpdateRequestDto settingsDto) {
@@ -70,5 +76,9 @@ public class UserService {
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return new UserInfoResponseDto(user);
+
+    public RestaurantListResponseDto findNearbyRestaurant(UserRestaurantRequestDto dto) {
+        return restaurantService.findNearbyRestaurant(dto);
+
     }
 }
