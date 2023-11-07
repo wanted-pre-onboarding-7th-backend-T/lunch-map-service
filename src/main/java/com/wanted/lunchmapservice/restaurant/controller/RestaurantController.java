@@ -2,9 +2,9 @@ package com.wanted.lunchmapservice.restaurant.controller;
 
 import com.wanted.lunchmapservice.common.dto.CustomPage;
 import com.wanted.lunchmapservice.common.dto.ResponseDto;
-import com.wanted.lunchmapservice.restaurant.dto.GetRestaurantDetailResponseDto;
-import com.wanted.lunchmapservice.restaurant.dto.GetRestaurantSimpleResponseDto;
-import com.wanted.lunchmapservice.restaurant.dto.RestaurantGetFilterDto;
+import com.wanted.lunchmapservice.restaurant.dto.RequestRestaurantGetFilterDto;
+import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantDetailDto;
+import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantSimpleDto;
 import com.wanted.lunchmapservice.restaurant.service.RestaurantGetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -23,14 +23,14 @@ public class RestaurantController {
     private final RestaurantGetService getService;
 
     @GetMapping("/{restaurantId}")
-    public ResponseEntity<ResponseDto<GetRestaurantDetailResponseDto>> getRestaurantDetail(
+    public ResponseEntity<ResponseDto<ResponseGetRestaurantDetailDto>> getRestaurantDetail(
             @PathVariable Long restaurantId) {
         return ResponseEntity.ok(getService.getDetails(restaurantId));
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<CustomPage<GetRestaurantSimpleResponseDto>>> getRestaurant(
-            @ModelAttribute RestaurantGetFilterDto request, Pageable pageable) {
+    public ResponseEntity<ResponseDto<CustomPage<ResponseGetRestaurantSimpleDto>>> getRestaurant(
+            @ModelAttribute RequestRestaurantGetFilterDto request, Pageable pageable) {
         return ResponseEntity.ok(getService.getRestaurant(request, pageable));
     }
 

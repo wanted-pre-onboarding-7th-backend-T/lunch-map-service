@@ -3,9 +3,9 @@ package com.wanted.lunchmapservice.restaurant.service;
 import com.wanted.lunchmapservice.common.dto.CustomPage;
 import com.wanted.lunchmapservice.common.dto.ResponseDto;
 import com.wanted.lunchmapservice.common.exception.CommonException;
-import com.wanted.lunchmapservice.restaurant.dto.GetRestaurantDetailResponseDto;
-import com.wanted.lunchmapservice.restaurant.dto.GetRestaurantSimpleResponseDto;
-import com.wanted.lunchmapservice.restaurant.dto.RestaurantGetFilterDto;
+import com.wanted.lunchmapservice.restaurant.dto.RequestRestaurantGetFilterDto;
+import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantDetailDto;
+import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantSimpleDto;
 import com.wanted.lunchmapservice.restaurant.entity.Restaurant;
 import com.wanted.lunchmapservice.restaurant.mapper.RestaurantMapper;
 import com.wanted.lunchmapservice.restaurant.repository.RestaurantRepository;
@@ -22,13 +22,14 @@ public class RestaurantGetService {
     private final RestaurantRepository repository;
     private final RestaurantMapper mapper;
 
-    public ResponseDto<GetRestaurantDetailResponseDto> getDetails(Long restaurantId) {
+    public ResponseDto<ResponseGetRestaurantDetailDto> getDetails(Long restaurantId) {
         Restaurant result = validRestaurant(restaurantId);
         result.sortRatingList();
         return mapper.toResponseDto(result);
     }
 
-    public ResponseDto<CustomPage<GetRestaurantSimpleResponseDto>> getRestaurant(RestaurantGetFilterDto request, Pageable pageable) {
+    public ResponseDto<CustomPage<ResponseGetRestaurantSimpleDto>> getRestaurant(
+            RequestRestaurantGetFilterDto request, Pageable pageable) {
         return mapper.toResponseDto(repository.findPageByFilter(pageable,request));
     }
 
