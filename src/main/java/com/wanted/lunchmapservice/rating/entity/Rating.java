@@ -1,4 +1,4 @@
-package com.wanted.lunchmapservice.rating;
+package com.wanted.lunchmapservice.rating.entity;
 
 import com.wanted.lunchmapservice.common.BaseTime;
 import com.wanted.lunchmapservice.restaurant.entity.Restaurant;
@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +34,7 @@ public class Rating extends BaseTime {
 
     @ColumnDefault("-1")
     @Column(name = "score", updatable = false)
-    private Integer Score;
+    private Integer score;
 
     @ColumnDefault("'EMPTY'")
     @Column(name = "content", nullable = false)
@@ -46,4 +47,13 @@ public class Rating extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    public void updateRating() {
+        List<Rating> ratings = restaurant.getRatings();
+
+        double totalScore = ratings.stream().mapToInt(Rating::getScore).sum();
+        double averageScore = totalScore / ratings.size();
+
+        this.restaurant.setRating(averageScore);
+    }
 }
