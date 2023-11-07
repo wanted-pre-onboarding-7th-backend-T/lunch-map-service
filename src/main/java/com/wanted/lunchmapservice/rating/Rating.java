@@ -33,7 +33,7 @@ public class Rating extends BaseTime {
 
     @ColumnDefault("-1")
     @Column(name = "score", updatable = false)
-    private Integer Score;
+    private Integer score;
 
     @ColumnDefault("'EMPTY'")
     @Column(name = "content", nullable = false)
