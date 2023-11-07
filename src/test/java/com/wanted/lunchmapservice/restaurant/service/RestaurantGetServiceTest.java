@@ -34,12 +34,12 @@ class RestaurantGetServiceTest {
 
     @Test
     @DisplayName("맛집 상세 조회 : 성공")
-    void get_restaurant_detail_success_test() throws Exception {
+    void get_restaurant_detail_success_test() {
         // given
         long requestId = 1L;
         Restaurant afterRepository = mock.getEntity(requestId);
 
-        given(repository.findById(anyLong())).willReturn(Optional.of(afterRepository));
+        given(repository.findByIdFetch(anyLong())).willReturn(Optional.of(afterRepository));
         // when
         var result = service.getDetails(requestId);
         // then
@@ -59,10 +59,10 @@ class RestaurantGetServiceTest {
 
     @Test
     @DisplayName("맛집 상세 조회 : 실패[조회불가]")
-    void get_restaurant_detail_fail_test() throws Exception {
+    void get_restaurant_detail_fail_test() {
         // given
         long requestId = 1L;
-        given(repository.findById(anyLong())).willReturn(Optional.empty());
+        given(repository.findByIdFetch(anyLong())).willReturn(Optional.empty());
         // when
         // then
         assertThatThrownBy(() -> service.getDetails(requestId))
