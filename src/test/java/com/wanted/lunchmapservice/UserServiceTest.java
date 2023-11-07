@@ -1,8 +1,10 @@
-package com.wanted.lunchmapservice.user;
+package com.wanted.lunchmapservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
 import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
@@ -31,11 +33,12 @@ public class UserServiceTest {
     @Test
     public void whenGetUserInfo_thenReturnsUserInfo() {
         // Given
-        Long userId = 1L; // 존재하는 사용자 ID
+        Long userId = 1L;
         User user = new User();
         user.setId(userId);
-        user.setUserName("John Doe"); // 사용자 정보 설정
-        userRepository.save(user); // 사용자 저장
+        user.setUserName("John Doe");
+
+        given(userRepository.save(any(User.class))).willReturn(user);
 
         // When
         UserInfoResponseDto response = userService.getUserInfo(userId);
