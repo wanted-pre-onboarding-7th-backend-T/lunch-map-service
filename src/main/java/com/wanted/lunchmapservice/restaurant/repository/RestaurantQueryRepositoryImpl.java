@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 public class RestaurantQueryRepositoryImpl implements  RestaurantQueryRepository{
     private final JPAQueryFactory query;
 
+    @Override
     public Page<Restaurant> findPageByFilter(Pageable pageable, RestaurantGetFilterDto condition){
         List<Restaurant> content = query
                 .selectFrom(restaurant)
