@@ -36,7 +36,7 @@ public class UserController {
 
     @GetMapping("/nearby")
     public ResponseEntity<RestaurantListResponseDto> getRecommendedRestaurant(@ModelAttribute
-    UserRestaurantRequestDto dto) {
+    @Valid UserRestaurantRequestDto dto) {
         RestaurantListResponseDto result = service.findNearbyRestaurant(dto);
         return ResponseEntity.ok(result);
     }
