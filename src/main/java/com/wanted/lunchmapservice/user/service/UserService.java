@@ -51,7 +51,6 @@ public class UserService {
 
         updateUserData(user, settingsDto);
 
-        repository.save(user);
     }
 
     private void updateUserData(User user, UserUpdateRequestDto settingsDto) {
