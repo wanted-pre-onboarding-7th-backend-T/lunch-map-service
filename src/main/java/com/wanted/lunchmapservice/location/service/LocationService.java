@@ -2,8 +2,8 @@ package com.wanted.lunchmapservice.location.service;
 
 import com.wanted.lunchmapservice.location.entity.Location;
 import com.wanted.lunchmapservice.location.repository.LocationRepository;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +16,16 @@ public class LocationService {
 
     @Transactional
     public List<Location> syncLocationData(List<Location> csvLocationList) {
-        List<Location> locationList = locationRepository.findAll();
-        List<Location> newLocationList = new ArrayList<>();
+        Map<String, Location> locationMap = locationRepository.findAllMap();
         for (Location csvLocation : csvLocationList) {
-            locationList.stream()
-                .filter(location -> location.getCode().equals(csvLocation.getCode()))
-                .findFirst()
-                .ifPresentOrElse(location -> location.update(csvLocation),
-                    () -> newLocationList.add(csvLocation));
+            if (locationMap.containsKey(csvLocation.getCode())) {
+                locationMap.get(csvLocation.getCode()).update(csvLocation);
+            } else {
+                locationMap.put(csvLocation.getCode(), csvLocation);
+            }
         }
-
-        locationList.addAll(newLocationList);
-        locationRepository.saveAll(locationList); //update or insert
-        return locationList;
+        List<Location> updatedLocaionList = locationMap.values().stream().toList();
+        locationRepository.saveAll(updatedLocaionList); //update or insert
+        return updatedLocaionList;
     }
 }
