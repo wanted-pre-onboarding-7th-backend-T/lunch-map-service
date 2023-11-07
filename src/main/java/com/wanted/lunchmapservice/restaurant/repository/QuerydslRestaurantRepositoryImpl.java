@@ -33,6 +33,8 @@ public class QuerydslRestaurantRepositoryImpl implements QuerydslRestaurantRepos
                 .from(restaurant)
                 .where(acosExpression(userLat, userLng).loe(dto.getRange()))
                 .orderBy(getOrderByExpression(userLat, userLng, dto.getSorting()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
         return new PageImpl<>(nearByRestaurants, pageable, countRestaurantNearBy(dto));
     }
@@ -46,9 +48,8 @@ public class QuerydslRestaurantRepositoryImpl implements QuerydslRestaurantRepos
                 .fetchOne();
     }
 
-    private OrderSpecifier<?> getOrderByExpression(Double userLat, Double userLng, String sorting) {
-        Sorting parsedSorting = Sorting.parse(sorting);
-        if (parsedSorting.equals(ORDER_BY_RATING)) {
+    private OrderSpecifier<?> getOrderByExpression(Double userLat, Double userLng, Sorting sorting) {
+        if (sorting.equals(ORDER_BY_RATING)) {
             return restaurant.averageScore.desc();
         }
         return acosExpression(userLat, userLng).asc();
