@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,7 +28,7 @@ public class RestaurantGetService {
         return mapper.toResponseDto(result);
     }
 
-    public ResponseDto<CustomPage<GetRestaurantSimpleResponseDto>> getRestaurant(@ModelAttribute RestaurantGetFilterDto request, Pageable pageable) {
+    public ResponseDto<CustomPage<GetRestaurantSimpleResponseDto>> getRestaurant(RestaurantGetFilterDto request, Pageable pageable) {
         return mapper.toResponseDto(repository.findPageByFilter(pageable,request));
     }
 
