@@ -103,4 +103,8 @@ public class Restaurant extends BaseTime {
     public void sortRatingList() {
         ratingList.sort((d1, d2) -> d2.getId().compareTo(d1.getId()));
     }
+
+    public void setAverageScore(Double averageScore) {
+        this.averageScore = averageScore;
+    }
 }
