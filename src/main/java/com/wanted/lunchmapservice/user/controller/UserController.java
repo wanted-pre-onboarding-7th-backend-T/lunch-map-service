@@ -3,6 +3,7 @@ package com.wanted.lunchmapservice.user.controller;
 import com.wanted.lunchmapservice.common.dto.ResponseDto;
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponseDto;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
+import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
 import com.wanted.lunchmapservice.user.service.UserService;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +35,14 @@ public class UserController {
         URI location = UriCreator.createUri(URL, result.getData().getUserId());
         return ResponseEntity.created(location).body(result);
     }
+    @PatchMapping("/info")
+    public ResponseEntity<?> updateUserInfo(@Valid @RequestBody UserUpdateRequestDto settingsDto) {
 
+        service.updateUserSettings(settingsDto);
+
+        return ResponseEntity.ok().build();
+    }
+  
     @GetMapping("/nearby")
     public ResponseEntity<RestaurantListResponseDto> getRecommendedRestaurant(@ModelAttribute
     @Valid UserRestaurantRequestDto dto) {

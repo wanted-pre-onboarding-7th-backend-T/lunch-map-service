@@ -43,4 +43,21 @@ public class User extends BaseTime {
     @ColumnDefault("'NONE'")
     @Column(name = "service_access")
     private ServiceAccess serviceAccess;
+
+    public void setServiceAccess(ServiceAccess serviceAccess) {
+        this.serviceAccess = serviceAccess;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    //테스트용 아이디세터
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
