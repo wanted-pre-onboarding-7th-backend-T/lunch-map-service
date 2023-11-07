@@ -17,7 +17,7 @@ public class OpenApiCaller {
     private final XmlFormatter formatter;
     private final XmlConverter converter;
 
-    public List<RawRestaurant> callApi() {
+    public List<RawRestaurant> callApiList() {
         RestTemplate restTemplate = new RestTemplate();
         List<RawRestaurant> rawDataList = new ArrayList<>();
         for (String url : apiUrls.getApiUrlList()) {

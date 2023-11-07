@@ -25,9 +25,9 @@ public class RestaurantSchedulerService {
     @Transactional
     @Scheduled(initialDelay = 30000, fixedDelay = 3600000) //서버 시작 30초 후, 이후에는 1시간 마다
 //    @Scheduled(cron = "59 59 23 ? * FRI") //매주 금요일 23시 59분 59초 마다
-    public void syncRestaurantData() {
+    public void syncRestaurantDataWithOpenApi() {
         rawRestaurantRepository.findAll(); //영속성 컨텍스트 영속화
-        List<RawRestaurant> rawRestaurantList = apiCaller.callApi();
+        List<RawRestaurant> rawRestaurantList = apiCaller.callApiList();
         rawRestaurantRepository.saveAll(rawRestaurantList); //update or insert
         syncRestaurantData(rawRestaurantList);
     }

@@ -53,7 +53,7 @@ class RestaurantSchedulerServiceTest {
         Restaurant restaurant = Fixtures.aRestaurant().zipCode("54321").build();
         List<RawRestaurant> rawRestaurantList = List.of(updatedRawRestaurant, newRawRestaurant);
         List<Restaurant> restaurantList = List.of(restaurant);
-        given(openApiCaller.callApi()).willReturn(rawRestaurantList);
+        given(openApiCaller.callApiList()).willReturn(rawRestaurantList);
         given(restaurantRepository.findAll()).willReturn(restaurantList);
 
         //when

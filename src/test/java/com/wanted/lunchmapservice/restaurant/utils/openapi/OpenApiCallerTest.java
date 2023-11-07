@@ -61,7 +61,7 @@ class OpenApiCallerTest {
         }
 
         //when
-        List<RawRestaurant> rawRestaurantList = openApiCaller.callApi();
+        List<RawRestaurant> rawRestaurantList = openApiCaller.callApiList();
 
         //then
         then(xmlFormatter).should(times(4)).format(anyString());
