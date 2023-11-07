@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +32,16 @@ import org.hibernate.annotations.DynamicInsert;
 @DynamicInsert
 @Entity
 public class Restaurant extends BaseTime {
+
     @Id
     @Column(name = "restaurant_id", updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurant_seq")
+    @SequenceGenerator(name = "restaurant_seq", sequenceName = "restaurant_seq", allocationSize = 100)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @ColumnDefault("'EMPTY'")
     @Column(name = "name", nullable = false)
@@ -63,14 +70,35 @@ public class Restaurant extends BaseTime {
     @ColumnDefault("-1")
     @Column(name = "average_score", nullable = false)
     private Double averageScore;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "location_id")
-    private Location location;
-
+  
     @Default
     @OneToMany(fetch = LAZY, cascade = CascadeType.PERSIST, mappedBy = "restaurant")
     private List<Rating> ratingList = new ArrayList<>();
+
+    public static Restaurant of(Location location, RawRestaurant rawData) {
+        return Restaurant.builder()
+            .location(location)
+            .name(rawData.getName())
+            .lotNumberAddress(rawData.getLotNumberAddress())
+            .roadNameAddress(rawData.getRoadNameAddress())
+            .zipCode(rawData.getZipCode())
+            .longitude(rawData.getLongitude())
+            .latitude(rawData.getLatitude())
+            .averageScore(0.).build();
+    }
+
+    public String getKey() {
+        return name + " " + lotNumberAddress;
+    }
+
+    public void update(Location location, RawRestaurant rawData) {
+        this.location = location;
+        this.name = rawData.getName();
+        this.lotNumberAddress = rawData.getLotNumberAddress();
+        this.roadNameAddress = rawData.getRoadNameAddress();
+        this.zipCode = rawData.getZipCode();
+        this.longitude = rawData.getLongitude();
+        this.latitude = rawData.getLatitude();
 
     public void sortRatingList() {
         ratingList.sort((d1, d2) -> d2.getId().compareTo(d1.getId()));
