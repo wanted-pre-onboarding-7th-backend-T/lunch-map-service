@@ -2,28 +2,17 @@ package com.wanted.lunchmapservice.user.dto.request;
 
 import com.wanted.lunchmapservice.user.enums.ServiceAccess;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class UserUpdateRequestDto {
-
+    @Setter
     private Double latitude;
+    @Setter
     private Double longitude;
+    @Setter
     private ServiceAccess serviceAccess;
+    @Setter
     private Long userId;
 
-    public void setServiceAccess(ServiceAccess serviceAccess) {
-        this.serviceAccess = serviceAccess;
-    }
-
-    public void setLatitude(Double latitude) {
-
-        this.latitude = latitude;
-    }
-    public void setLongitude(Double longitude) {
-
-        this.longitude = longitude;
-    }
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }
