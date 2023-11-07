@@ -2,6 +2,7 @@ package com.wanted.lunchmapservice.user.service;
 
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantResponseDto;
 import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
+import com.wanted.lunchmapservice.user.enums.Sorting;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,8 +67,8 @@ class UserServiceTest {
         UserRestaurantRequestDto requestDto = UserRestaurantRequestDto.builder()
                 .currentLatitude(String.valueOf(lat))
                 .currentLongitude(String.valueOf(lon))
+                .sorting(Sorting.ORDER_BY_RATING)
                 .range(range)
-                .sorting("rating")
                 .build();
 
         //when
@@ -88,9 +89,8 @@ class UserServiceTest {
                 .currentLatitude(String.valueOf(lat))
                 .currentLongitude(String.valueOf(lon))
                 .range(range)
-                .sorting("distance")
+                .sorting(Sorting.ORDER_BY_DISTANCE)
                 .build();
-
         //when
         List<RestaurantResponseDto> responseRestaurants = userService.findNearbyRestaurant(requestDto)
                 .getResponseRestaurants();
