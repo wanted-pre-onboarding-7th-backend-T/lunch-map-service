@@ -21,6 +21,5 @@ public class UserInfoResponseDto {
         this.latitude = user.getLatitude();
         this.longitude = user.getLongitude();
         this.serviceAccess = user.getServiceAccess();
-        // 기타 필드들 초기화...
     }
 }
