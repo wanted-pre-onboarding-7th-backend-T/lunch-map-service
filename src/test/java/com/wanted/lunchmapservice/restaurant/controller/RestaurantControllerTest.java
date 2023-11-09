@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wanted.lunchmapservice.common.config.SecurityConfig;
-import com.wanted.lunchmapservice.common.security.service.UserDetailsServiceImpl;
+import com.wanted.lunchmapservice.rating.service.RatingService;
 import com.wanted.lunchmapservice.restaurant.config.RestaurantControllerTestConfig;
 import com.wanted.lunchmapservice.restaurant.mock.AuthStub;
 import com.wanted.lunchmapservice.restaurant.mock.RestaurantMock;
@@ -43,8 +43,7 @@ class RestaurantControllerTest {
     @MockBean
     RestaurantGetService getService;
     @MockBean
-    UserDetailsServiceImpl detailsService;
-
+    RatingService service;
 
     @Test
     @WithMockUser
