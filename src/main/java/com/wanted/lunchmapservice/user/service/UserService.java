@@ -4,12 +4,15 @@ package com.wanted.lunchmapservice.user.service;
 import com.wanted.lunchmapservice.common.dto.ResponseDto;
 import com.wanted.lunchmapservice.common.exception.CommonException;
 import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
+import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
+import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponseDto;
 import com.wanted.lunchmapservice.restaurant.service.RestaurantService;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
+import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
 import com.wanted.lunchmapservice.user.entity.User;
 import com.wanted.lunchmapservice.user.mapper.UserMapper;
 import com.wanted.lunchmapservice.user.repository.UserRepository;
@@ -50,8 +53,13 @@ public class UserService {
     @Transactional
     public void updateUserSettings(UserUpdateRequestDto settingsDto) {
         User user = repository.findById(settingsDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        updateUserData(user, settingsDto);
+
+    }
+
+    private void updateUserData(User user, UserUpdateRequestDto settingsDto) {
         if (settingsDto.getServiceAccess() != null) {
             user.setServiceAccess(settingsDto.getServiceAccess());
         }
@@ -61,12 +69,12 @@ public class UserService {
         if (settingsDto.getLongitude() != null) {
             user.setLongitude(settingsDto.getLongitude());
         }
-
-        repository.save(user);
     }
 
-    public RestaurantListResponseDto findNearbyRestaurant(UserRestaurantRequestDto dto) {
-        return restaurantService.findNearbyRestaurant(dto);
+    public UserInfoResponseDto getUserInfo(Long userId) {
+        User user = repository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        return new UserInfoResponseDto(user);
     }
 }
