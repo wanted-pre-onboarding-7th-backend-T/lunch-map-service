@@ -4,7 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.wanted.lunchmapservice.common.BaseTime;
 import com.wanted.lunchmapservice.location.entity.Location;
-import com.wanted.lunchmapservice.rating.Rating;
+import com.wanted.lunchmapservice.rating.entity.Rating;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -76,6 +76,10 @@ public class Restaurant extends BaseTime {
     @OneToMany(fetch = LAZY, cascade = CascadeType.PERSIST, mappedBy = "restaurant")
     private List<Rating> ratingList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Rating> ratings = new ArrayList<>();
+
+
     public static Restaurant of(Location location, RawRestaurant rawData) {
         return Restaurant.builder()
                 .location(location)
@@ -108,5 +112,17 @@ public class Restaurant extends BaseTime {
 
     public void setAverageScore(Double averageScore) {
         this.averageScore = averageScore;
+    }
+
+    public void updateRating() {
+        List<Rating> ratings = getRatings();
+
+        if (ratings.isEmpty()) {
+            this.averageScore = 0.0;
+        } else {
+            double totalScore = ratings.stream().mapToInt(Rating::getScore).sum();
+            double averageScore = totalScore / ratings.size();
+            this.averageScore = averageScore;
+        }
     }
 }

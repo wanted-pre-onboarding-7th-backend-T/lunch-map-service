@@ -5,7 +5,7 @@ import com.wanted.lunchmapservice.common.dto.PageInfo;
 import com.wanted.lunchmapservice.common.dto.ResponseDto;
 import com.wanted.lunchmapservice.location.dto.ResponseLocationDto;
 import com.wanted.lunchmapservice.location.entity.Location;
-import com.wanted.lunchmapservice.rating.Rating;
+import com.wanted.lunchmapservice.rating.entity.Rating;
 import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantDetailDto;
 import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantSimpleDto;
 import com.wanted.lunchmapservice.restaurant.dto.ResponseRatingDto;
