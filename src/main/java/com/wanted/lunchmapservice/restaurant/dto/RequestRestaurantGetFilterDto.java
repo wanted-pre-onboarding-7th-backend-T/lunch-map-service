@@ -2,8 +2,9 @@ package com.wanted.lunchmapservice.restaurant.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 @AllArgsConstructor
 public class RequestRestaurantGetFilterDto {
     private String cityName;

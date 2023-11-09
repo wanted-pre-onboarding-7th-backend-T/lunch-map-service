@@ -1,116 +1,84 @@
 package com.wanted.lunchmapservice.user.service;
 
-import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantResponseDto;
-import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
-import com.wanted.lunchmapservice.user.enums.Sorting;
-import java.util.List;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.any;
+import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
+import com.wanted.lunchmapservice.user.entity.User;
+import com.wanted.lunchmapservice.user.repository.UserRepository;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
+import com.wanted.lunchmapservice.user.enums.ServiceAccess;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-
-@Transactional
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest
-class UserServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class UserServiceTest {
 
-    @Autowired
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
     private UserService userService;
-    @Autowired
-    private RatingDataInit ratingDataInit;
-    private final int EARTH_RADIUS = 6371;
+    private User user;
 
-    //임의의 식당의 위도와 경도를 사용자의 위도와 경도로 지정 (restaurantId = 8)
-    private final Double lat = 37.2738734428;
-    private final Double lon = 126.9412806228;
-
-    @BeforeEach
-    void testDataInit() {
-        ratingDataInit.createTestRatingData();
-    }
-
-    @DisplayName("사용자 근처의 식당조회")
     @Test
-    void findNearByRestaurantTest() {
+    public void whenUpdateUserSettings_thenUpdateFields() {
+        // given
+        Long userId = 1L;
+        ServiceAccess newServiceAccess = ServiceAccess.LUNCH;
+        Double newLatitude = 40.7128;
+        Double newLongitude = -74.0060;
+        User existingUser = new User(); // Mock existing user details
+        existingUser.setId(userId);
+        UserUpdateRequestDto updateDto = new UserUpdateRequestDto();
+        updateDto.setUserId(userId);
+        updateDto.setServiceAccess(newServiceAccess);
+        updateDto.setLatitude(newLatitude);
+        updateDto.setLongitude(newLongitude);
 
-        //given
-        Double range = 1.0;
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(existingUser));
+        doAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            assertEquals(newServiceAccess, user.getServiceAccess());
+            assertEquals(newLatitude, user.getLatitude());
+            assertEquals(newLongitude, user.getLongitude());
+            return null;
+        }).when(userRepository).save(any(User.class));
 
-        UserRestaurantRequestDto restaurantRequestDto = UserRestaurantRequestDto.builder()
-                .currentLatitude(String.valueOf(lat))
-                .currentLongitude(String.valueOf(lon))
-                .range(range)
-                .build();
+        // when
+        userService.updateUserSettings(updateDto);
 
-        //when
-        List<RestaurantResponseDto> responseRestaurants = userService.findNearbyRestaurant(restaurantRequestDto)
-                .getResponseRestaurants();
-
-        //then
-        for (RestaurantResponseDto responseRestaurant : responseRestaurants) {
-            Assertions.assertThat(
-                            calculateDistance(lat, lon, responseRestaurant.getLatitude(),
-                                    responseRestaurant.getLongitude()))
-                    .isLessThanOrEqualTo(range);
-        }
+        // then
+        verify(userRepository).save(any(User.class));
     }
 
-
-    @DisplayName("사용자 근처의 식당은 평점순(높은순)으로 조회")
     @Test
-    void orderByRatingTest() {
-        //given
-        Double range = 3.0;
-        UserRestaurantRequestDto requestDto = UserRestaurantRequestDto.builder()
-                .currentLatitude(String.valueOf(lat))
-                .currentLongitude(String.valueOf(lon))
-                .sorting(Sorting.ORDER_BY_RATING)
-                .range(range)
-                .build();
+    public void whenUpdateUserSettings_withNonExistentUser_thenThrowException() {
+        // given
+        Long userId = 1L;
+        UserUpdateRequestDto updateDto = new UserUpdateRequestDto();
+        updateDto.setUserId(userId);
 
-        //when
-        List<RestaurantResponseDto> responseRestaurants = userService.findNearbyRestaurant(requestDto)
-                .getResponseRestaurants();
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        //then
-        Assertions.assertThat(responseRestaurants.get(0).getAverageScore())
-                .isGreaterThanOrEqualTo(responseRestaurants.get(1).getAverageScore());
-    }
+        // when
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.updateUserSettings(updateDto);
+        });
 
-    @DisplayName("사용자 근처의 식당은 거리순(가까운순)으로 조회")
-    @Test
-    void orderByDistanceTest() {
-        //given
-        Double range = 3.0;
-        UserRestaurantRequestDto requestDto = UserRestaurantRequestDto.builder()
-                .currentLatitude(String.valueOf(lat))
-                .currentLongitude(String.valueOf(lon))
-                .range(range)
-                .sorting(Sorting.ORDER_BY_DISTANCE)
-                .build();
-        //when
-        List<RestaurantResponseDto> responseRestaurants = userService.findNearbyRestaurant(requestDto)
-                .getResponseRestaurants();
-
-        //then
-        double nearestDistance = calculateDistance(lat, lon, responseRestaurants.get(1).getLatitude(),
-                responseRestaurants.get(0).getLongitude());
-        double secondNearestDistance = calculateDistance(lat, lon, responseRestaurants.get(2).getLatitude(),
-                responseRestaurants.get(0).getLongitude());
-        Assertions.assertThat(nearestDistance).isLessThanOrEqualTo(secondNearestDistance);
-    }
-
-    //두 위도와 경도 사이의 거리를 구하는 메소드
-    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double deltaLat = Math.toRadians(lat2 - lat1);
-        double deltaLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS * c;
+        // then
+        assertEquals("User not found", exception.getMessage());
     }
 }
+

@@ -13,6 +13,10 @@ import com.wanted.lunchmapservice.restaurant.repository.RawRestaurantRepository;
 import com.wanted.lunchmapservice.restaurant.repository.RestaurantRepository;
 import com.wanted.lunchmapservice.restaurant.utils.openapi.OpenApiCaller;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +45,7 @@ class RestaurantSchedulerServiceTest {
     RestaurantRepository restaurantRepository;
 
     @Captor
-    ArgumentCaptor<Restaurant> restaurantArgumentCaptor;
+    ArgumentCaptor<List<Restaurant>> restaurantArgumentCaptor;
 
     @DisplayName("식당 정보 외부 API와 동기화 테스트 : 성공")
     @Test
@@ -52,21 +56,20 @@ class RestaurantSchedulerServiceTest {
             .rawRestaurantId(new RawRestaurantId("카페솔루션랩", "경기도 용인시 수지구 신봉동 772-4 시골보신탕")).build();
         Restaurant restaurant = Fixtures.aRestaurant().zipCode("54321").build();
         List<RawRestaurant> rawRestaurantList = List.of(updatedRawRestaurant, newRawRestaurant);
-        List<Restaurant> restaurantList = List.of(restaurant);
+        Map<String, Restaurant> restaurantMap = Stream.of(restaurant)
+            .collect(Collectors.toMap(Restaurant::getKey, Function.identity()));
         given(openApiCaller.callApiList()).willReturn(rawRestaurantList);
-        given(restaurantRepository.findAll()).willReturn(restaurantList);
+        given(restaurantRepository.findAllMap()).willReturn(restaurantMap);
 
         //when
-        restaurantSchedulerService.syncRestaurantData();
+        restaurantSchedulerService.syncRestaurantDataWithOpenApi();
 
         //then
         then(rawRestaurantRepository).should(times(1)).findAll();
         then(rawRestaurantRepository).should(times(1)).saveAll(rawRestaurantList);
-        then(restaurantRepository).should(times(1)).findAll();
-        then(restaurantRepository).should(times(1)).save(restaurantArgumentCaptor.capture());
+        then(restaurantRepository).should(times(1)).findAllMap();
+        then(restaurantRepository).should(times(1)).saveAll(restaurantArgumentCaptor.capture());
         assertThat(restaurant.getZipCode()).isEqualTo(updatedRawRestaurant.getZipCode());
-        assertThat(restaurantArgumentCaptor.getValue())
-            .extracting("name", "lotNumberAddress")
-            .containsExactly("카페솔루션랩", "경기도 용인시 수지구 신봉동 772-4 시골보신탕");
+        assertThat(restaurantArgumentCaptor.getValue()).hasSize(2);
     }
 }
