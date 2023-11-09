@@ -4,6 +4,7 @@ import com.wanted.lunchmapservice.rating.dto.RatingCreateRequestDto;
 import com.wanted.lunchmapservice.rating.entity.Rating;
 import com.wanted.lunchmapservice.rating.repository.RatingRepository;
 import com.wanted.lunchmapservice.restaurant.entity.Restaurant;
+import com.wanted.lunchmapservice.restaurant.repository.RestaurantRepository;
 import com.wanted.lunchmapservice.user.entity.User;
 import com.wanted.lunchmapservice.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;

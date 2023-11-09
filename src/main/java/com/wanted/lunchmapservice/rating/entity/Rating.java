@@ -54,6 +54,7 @@ public class Rating extends BaseTime {
         double totalScore = ratings.stream().mapToInt(Rating::getScore).sum();
         double averageScore = totalScore / ratings.size();
 
-        this.restaurant.setRating(averageScore);
+        this.restaurant.setAverageScore(averageScore);
     }
+
 }
