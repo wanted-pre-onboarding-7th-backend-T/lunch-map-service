@@ -15,6 +15,7 @@ public class UserInfoResponseDto {
     private final Double longitude;
     private final ServiceAccess serviceAccess;
 
+
     public UserInfoResponseDto(User user) {
         this.id = user.getId();
         this.userName = user.getUserName();
@@ -22,4 +23,5 @@ public class UserInfoResponseDto {
         this.longitude = user.getLongitude();
         this.serviceAccess = user.getServiceAccess();
     }
+
 }

@@ -9,6 +9,7 @@ import com.wanted.lunchmapservice.rating.Rating;
 import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantDetailDto;
 import com.wanted.lunchmapservice.restaurant.dto.ResponseGetRestaurantSimpleDto;
 import com.wanted.lunchmapservice.restaurant.dto.ResponseRatingDto;
+import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantResponseDto;
 import com.wanted.lunchmapservice.restaurant.entity.Restaurant;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -93,6 +94,20 @@ public class RestaurantMapper {
                 .content(entity.getContent())
                 .username(entity.getUser().getUserName())
                 .score(entity.getScore())
+                .build();
+    }
+
+    public RestaurantResponseDto toRestaurantResponseDto(Restaurant restaurant) {
+        return RestaurantResponseDto.builder()
+                .id(restaurant.getId())
+                .locationId(restaurant.getLocation().getId())
+                .name(restaurant.getName())
+                .lotNumberAddress(restaurant.getLotNumberAddress())
+                .roadNameAddress(restaurant.getRoadNameAddress())
+                .zipCode(restaurant.getZipCode())
+                .latitude(restaurant.getLatitude())
+                .longitude(restaurant.getLongitude())
+                .averageScore(restaurant.getAverageScore())
                 .build();
     }
 }

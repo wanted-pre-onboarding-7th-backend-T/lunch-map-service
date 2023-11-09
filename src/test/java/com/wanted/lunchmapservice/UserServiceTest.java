@@ -5,12 +5,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
-
 import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
 import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
 import com.wanted.lunchmapservice.user.entity.User;
 import com.wanted.lunchmapservice.user.repository.UserRepository;
 import com.wanted.lunchmapservice.user.service.UserService;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
+import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
+import com.wanted.lunchmapservice.user.entity.User;
+import com.wanted.lunchmapservice.user.enums.ServiceAccess;
+import com.wanted.lunchmapservice.user.repository.UserRepository;
+import com.wanted.lunchmapservice.user.service.UserService;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @Mock
@@ -27,35 +40,55 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
-
     private User user;
 
     @Test
-    public void whenGetUserInfo_thenReturnsUserInfo() {
-        // Given
+    public void whenUpdateUserSettings_thenUpdateFields() {
+        // given
         Long userId = 1L;
-        User user = new User();
-        user.setId(userId);
-        user.setUserName("John Doe");
+        ServiceAccess newServiceAccess = ServiceAccess.LUNCH;
+        Double newLatitude = 40.7128;
+        Double newLongitude = -74.0060;
+        User existingUser = new User(); // Mock existing user details
+        existingUser.setId(userId);
+        UserUpdateRequestDto updateDto = new UserUpdateRequestDto();
+        updateDto.setUserId(userId);
+        updateDto.setServiceAccess(newServiceAccess);
+        updateDto.setLatitude(newLatitude);
+        updateDto.setLongitude(newLongitude);
 
-        given(userRepository.save(any(User.class))).willReturn(user);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(existingUser));
+        doAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            assertEquals(newServiceAccess, user.getServiceAccess());
+            assertEquals(newLatitude, user.getLatitude());
+            assertEquals(newLongitude, user.getLongitude());
+            return null;
+        }).when(userRepository).save(any(User.class));
 
-        // When
-        UserInfoResponseDto response = userService.getUserInfo(userId);
+        // when
+        userService.updateUserSettings(updateDto);
 
-        // Then
-        assertNotNull(response);
-        assertEquals(userId, response.getId());
-        assertEquals("John Doe", response.getUserName());
+        // then
+        verify(userRepository).save(any(User.class));
     }
 
     @Test
-    public void whenGetUserInfoForNonExistentUser_thenThrowsResourceNotFoundException() {
-        // Given
-        Long userId = 999L; // 존재하지 않는 사용자 ID
+    public void whenUpdateUserSettings_withNonExistentUser_thenThrowException() {
+        // given
+        Long userId = 1L;
+        UserUpdateRequestDto updateDto = new UserUpdateRequestDto();
+        updateDto.setUserId(userId);
 
-        // When & Then
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserInfo(userId));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.updateUserSettings(updateDto);
+        });
+
+        // then
+        assertEquals("User not found", exception.getMessage());
     }
-
 }
+

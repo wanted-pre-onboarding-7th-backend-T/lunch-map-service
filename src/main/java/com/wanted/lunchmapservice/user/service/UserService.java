@@ -10,6 +10,7 @@ import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponse
 import com.wanted.lunchmapservice.restaurant.service.RestaurantService;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
+import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
 import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
 import com.wanted.lunchmapservice.user.entity.User;
@@ -49,7 +50,6 @@ public class UserService {
         });
     }
 
-
     @Transactional
     public void updateUserSettings(UserUpdateRequestDto settingsDto) {
         User user = repository.findById(settingsDto.getUserId())
@@ -76,9 +76,5 @@ public class UserService {
             .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return new UserInfoResponseDto(user);
-
-    public RestaurantListResponseDto findNearbyRestaurant(UserRestaurantRequestDto dto) {
-        return restaurantService.findNearbyRestaurant(dto);
-
     }
 }
