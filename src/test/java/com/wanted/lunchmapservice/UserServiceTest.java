@@ -1,13 +1,21 @@
 package com.wanted.lunchmapservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
+import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
+import com.wanted.lunchmapservice.user.entity.User;
+import com.wanted.lunchmapservice.user.repository.UserRepository;
+import com.wanted.lunchmapservice.user.service.UserService;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import com.wanted.lunchmapservice.common.exception.ResourceNotFoundException;
 import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.user.entity.User;
@@ -20,7 +28,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
@@ -29,6 +40,7 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+    private User user;
 
     @Test
     public void whenUpdateUserSettings_thenUpdateFields() {
