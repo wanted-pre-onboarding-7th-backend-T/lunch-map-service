@@ -9,7 +9,6 @@ import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantListResponseDto;
 import com.wanted.lunchmapservice.restaurant.service.RestaurantService;
 import com.wanted.lunchmapservice.user.dto.request.UserPostRequestDto;
-import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
 import com.wanted.lunchmapservice.user.dto.request.UserUpdateRequestDto;
 import com.wanted.lunchmapservice.user.dto.response.UserIdResponseDto;
 import com.wanted.lunchmapservice.user.dto.response.UserInfoResponseDto;
@@ -30,7 +29,6 @@ public class UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
     private final PasswordEncoder encoder;
-    private final RestaurantService restaurantService;
 
     public ResponseDto<UserIdResponseDto> saveUser(UserPostRequestDto postDto) {
         validUsernameExist(postDto);
