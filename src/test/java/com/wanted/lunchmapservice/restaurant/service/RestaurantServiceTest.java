@@ -1,35 +1,47 @@
 package com.wanted.lunchmapservice.restaurant.service;
 
+import static org.mockito.ArgumentMatchers.any;
+
+import com.wanted.lunchmapservice.location.entity.Location;
+import com.wanted.lunchmapservice.restaurant.config.RestaurantServiceTestConfig;
 import com.wanted.lunchmapservice.restaurant.dto.response.RestaurantResponseDto;
+import com.wanted.lunchmapservice.restaurant.entity.Restaurant;
+import com.wanted.lunchmapservice.restaurant.repository.QuerydslRestaurantRepositoryCustom;
 import com.wanted.lunchmapservice.user.dto.request.UserRestaurantRequestDto;
 import com.wanted.lunchmapservice.user.enums.Sorting;
-import com.wanted.lunchmapservice.user.service.RatingDataInit;
+import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@Transactional
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@Import(RestaurantServiceTestConfig.class)
 class RestaurantServiceTest {
 
-    @Autowired
-    private RestaurantService restaurantService;
-    @Autowired
-    private RatingDataInit ratingDataInit;
     private final int EARTH_RADIUS = 6371;
-
     //임의의 식당의 위도와 경도를 사용자의 위도와 경도로 지정 (restaurantId = 8)
     private final Double lat = 37.2738734428;
     private final Double lon = 126.9412806228;
+    @Autowired
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    private RestaurantService restaurantService;
+    @MockBean
+    private QuerydslRestaurantRepositoryCustom restaurantRepository;
 
     @BeforeEach
     void testDataInit() {
-        ratingDataInit.createTestRatingData();
+//        ratingDataInit.createTestRatingData();
     }
 
     @DisplayName("사용자 근처의 식당조회")
@@ -45,8 +57,15 @@ class RestaurantServiceTest {
                 .range(range)
                 .build();
 
+        PageRequest pageRequest = PageRequest.of(0, 30);
+        PageImpl<Restaurant> pageEntity = new PageImpl<>(createList(), pageRequest, 30);
+
+        BDDMockito.given(
+                restaurantRepository.findNearByRestaurant(any(UserRestaurantRequestDto.class), any(
+                        Pageable.class))).willReturn(pageEntity);
         //when
-        List<RestaurantResponseDto> responseRestaurants = restaurantService.findNearbyRestaurant(restaurantRequestDto)
+        List<RestaurantResponseDto> responseRestaurants = restaurantService.findNearbyRestaurant(
+                        restaurantRequestDto)
                 .getResponseRestaurants();
 
         //then
@@ -71,8 +90,16 @@ class RestaurantServiceTest {
                 .range(range)
                 .build();
 
+        PageRequest pageRequest = PageRequest.of(0, 30);
+        PageImpl<Restaurant> pageEntity = new PageImpl<>(createList(), pageRequest, 30);
+
+        BDDMockito.given(
+                restaurantRepository.findNearByRestaurant(any(UserRestaurantRequestDto.class), any(
+                        Pageable.class))).willReturn(pageEntity);
+
         //when
-        List<RestaurantResponseDto> responseRestaurants = restaurantService.findNearbyRestaurant(requestDto)
+        List<RestaurantResponseDto> responseRestaurants = restaurantService.findNearbyRestaurant(
+                        requestDto)
                 .getResponseRestaurants();
 
         //then
@@ -91,14 +118,24 @@ class RestaurantServiceTest {
                 .range(range)
                 .sorting(Sorting.ORDER_BY_DISTANCE)
                 .build();
+
+        PageRequest pageRequest = PageRequest.of(0, 30);
+        PageImpl<Restaurant> pageEntity = new PageImpl<>(createList(), pageRequest, 30);
+
+        BDDMockito.given(
+                restaurantRepository.findNearByRestaurant(any(UserRestaurantRequestDto.class), any(
+                        Pageable.class))).willReturn(pageEntity);
         //when
-        List<RestaurantResponseDto> responseRestaurants = restaurantService.findNearbyRestaurant(requestDto)
+        List<RestaurantResponseDto> responseRestaurants = restaurantService.findNearbyRestaurant(
+                        requestDto)
                 .getResponseRestaurants();
 
         //then
-        double nearestDistance = calculateDistance(lat, lon, responseRestaurants.get(1).getLatitude(),
+        double nearestDistance = calculateDistance(lat, lon,
+                responseRestaurants.get(1).getLatitude(),
                 responseRestaurants.get(0).getLongitude());
-        double secondNearestDistance = calculateDistance(lat, lon, responseRestaurants.get(2).getLatitude(),
+        double secondNearestDistance = calculateDistance(lat, lon,
+                responseRestaurants.get(2).getLatitude(),
                 responseRestaurants.get(0).getLongitude());
         Assertions.assertThat(nearestDistance).isLessThanOrEqualTo(secondNearestDistance);
     }
@@ -112,5 +149,24 @@ class RestaurantServiceTest {
                         Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return EARTH_RADIUS * c;
+    }
+
+    private List<Restaurant> createList() {
+        List<Restaurant> list = new ArrayList<>();
+        for (Long i = 1L; i < 30; i++) {
+            list.add(createEntity(i));
+        }
+        return list;
+    }
+
+    private Restaurant createEntity(Long id) {
+        return Restaurant.builder()
+                .id(id)
+                .longitude(lon)
+                .latitude(lat)
+                .location(new Location(id, "경남" + id, "진주시" + id, lon, lat))
+                .averageScore((double) (id / 10))
+                .ratingList(new ArrayList<>())
+                .build();
     }
 }
